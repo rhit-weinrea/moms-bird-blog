@@ -1,0 +1,19 @@
+{
+  "name": "moms-bird-blog",
+  "version": "0.1.0",
+  "description": "Build scripts for Mom's Bird Blog Cloudflare Worker assets",
+  "scripts": {
+    "build:assets": "cpx \"static/**/*\" dist/",
+    "clean": "rimraf dist",
+    "prepare": "npm run clean && npm run build:assets",
+  "publish:worker": "npm run prepare && npx wrangler deploy"
+  },
+  "devDependencies": {
+    "cpx": "^1.5.0",
+    "rimraf": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=14"
+  },
+  "license": "MIT"
+}
