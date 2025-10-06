@@ -1,0 +1,12 @@
+{% extends 'layout.html' %}
+{% block content %}
+  <h3>Edit Animal</h3>
+  <form method="post">
+    <div class="form-group">
+      <label>Animal name</label>
+      <input class="form-control" name="name" value="{{ animal.name }}" required>
+    </div>
+    <button class="btn btn-primary" type="submit">Save</button>
+    <a class="btn btn-secondary" href="{{ url_for('species_profile', species_id=animal.species_id) }}">Cancel</a>
+  </form>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends 'layout.html' %}
+{% block head %}
+  <script>
+    // small helper: load animals for a species using fetch
+    function loadAnimals(speciesSelect, animalsSelect) {
+      const speciesId = speciesSelect.value;
+      animalsSelect.innerHTML = '<option value="">-- none --</option>';
+      if (!speciesId) return;
+      fetch(`/species/${speciesId}/animals`).then(r => r.json()).then(data => {
+        data.forEach(a => {
+          const opt = document.createElement('option');
+          opt.value = a.name; // we store name in existing_animal field
+          opt.textContent = a.name;
+          animalsSelect.appendChild(opt);
+        });
+      }).catch(e => console.error(e));
+    }
+  </script>
+{% endblock %}
+{% block content %}
+  <h3 style="text-align: center;">New Post</h3>
+  <form method="post" enctype="multipart/form-data">
+    <div class="form-group">
+      <label>Species</label>
+      <select class="form-control" id="speciesSelect" name="species" required onchange="loadAnimals(this, document.getElementById('animalsSelect'))">
+        <option value="">-- choose species --</option>
+        {% for s in species_list %}
+          <option value="{{ s.id }}" {% if selected_species_id and (s.id|string) == (selected_species_id|string) %}selected{% endif %}>{{ s.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Caption</label>
+      <input class="form-control" name="caption" required>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label>Choose existing animal (optional)</label>
+        <select id="animalsSelect" name="existing_animal" class="form-control">
+          <option value="">-- none --</option>
+        </select>
+      </div>
+      <div class="form-group col-md-6">
+        <label>Or enter animal name (preferred)</label>
+        <input class="form-control" name="animal_name">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Posted by (optional)</label>
+      <select name="user_id" class="form-control">
+        <option value="">-- none --</option>
+        {% for u in users %}
+          <option value="{{ u.id }}">{{ u.name }}</option>
+        {% endfor %}
+      </select>
+      <small class="form-text text-muted">Select a user to attribute this post to. You can add users on the Users page.</small>
+    </div>
+    <div class="form-group">
+      <label>Notes (optional)</label>
+      <textarea class="form-control" name="notes" rows="3"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Image</label>
+      <input class="form-control-file" type="file" name="image" accept="image/*" required>
+    </div>
+    <button class="btn btn-primary" type="submit">Create Post</button>
+  </form>
+  <script>
+    // auto-load animals if species preselected
+    (function(){
+      const speciesSelect = document.getElementById('speciesSelect');
+      const animalsSelect = document.getElementById('animalsSelect');
+      if (speciesSelect && speciesSelect.value) {
+        loadAnimals(speciesSelect, animalsSelect);
+      }
+    })();
+  </script>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'layout.html' %}
+{% block content %}
+  <h3>Add Species</h3>
+  <form method="post">
+    <div class="form-group">
+      <label>Species name</label>
+      <input class="form-control" name="name" placeholder="e.g. Northern Cardinal" required>
+    </div>
+    <button class="btn btn-success" type="submit">Create</button>
+  </form>
+{% endblock %}

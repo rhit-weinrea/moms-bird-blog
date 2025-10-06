@@ -1,0 +1,33 @@
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: bird
+      POSTGRES_PASSWORD: birdpass
+      POSTGRES_DB: birdblog
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 2s
+      retries: 10
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: "postgresql://bird:birdpass@db:5432/birdblog"
+      FLASK_ENV: "production"
+      FLASK_SECRET: "<replace-with-secret>"
+      EDITOR_USER: "editor"
+      EDITOR_PASS: "changeme"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+
+volumes:
+  db-data:
