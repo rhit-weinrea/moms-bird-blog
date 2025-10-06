@@ -13,7 +13,7 @@
 		"not_found_handling": "single-page-application"
 	},
 	"vars": {
-		"ORIGIN_URL": "https://your-origin.example"
+		"ORIGIN_URL": "https://creature-album.abby-weinreb.workers.dev/"
 	},
 	"observability": {
 		"enabled": true
