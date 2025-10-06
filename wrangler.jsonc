@@ -4,7 +4,8 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "abby-test",
+	// wrangler.jsonc
+    "name": "creature-album",
 	"main": "worker/index.js",
 	"compatibility_date": "2025-09-13",
 	"assets": {
