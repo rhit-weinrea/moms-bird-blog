@@ -1,19 +1,66 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Mama's Bird — Creature Album</title>
-    <link rel="stylesheet" href="/css/style.css">
-  </head>
-  <body>
-    <main style="max-width:700px;margin:3rem auto;padding:1rem;text-align:center;">
-      <h1>Mama's Bird — Creature Album</h1>
-      <p>This is a static landing page served by the Cloudflare Worker assets binding.</p>
-      <p>If you expect the full app here, ensure your origin is reachable and `ORIGIN_URL` in <code>wrangler.jsonc</code> points to your Flask origin.</p>
-      <p>
-        <a href="/">Open app root</a>
-      </p>
-    </main>
-  </body>
-</html>
+{% extends 'layout.html' %}
+{% block head %}
+  <style>
+    body { font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:#f6f7f9; color:#222; }
+    main{ max-width:700px;margin:3rem auto;padding:1rem;text-align:center; }
+    h1{ color:#1f6feb; margin-bottom:0.25rem }
+    p{ color:#444 }
+    a{ color:#1f6feb }
+  </style>
+{% endblock %}
+{% block content %}
+  <div class="row">
+    <div class="col-md-8">
+      <div style="display:flex;justify-content:center;flex-direction:column;align-items:center;margin-bottom:12px">
+        <h3>Recent Posts</h3>
+        <form method="get" action="{{ url_for('index') }}">
+          <select name="species_id" onchange="this.form.submit()" class="form-control">
+            <option value="">All species</option>
+            {% for s in species %}
+              <option value="{{ s.id }}" {% if request.args.get('species_id') and request.args.get('species_id')|int == s.id %}selected{% endif %}>{{ s.name }}</option>
+            {% endfor %}
+          </select>
+        </form>
+      </div>
+  <div class="feed feed-center">
+      {% for post in posts %}
+        <div class="card mb-3 post-card">
+          <!-- header -->
+          <div class="post-header centered">
+            <div class="post-avatar"><img src="{{ url_for('static', filename='images/default_avatar.svg') }}" alt="avatar"></div>
+            <div class="flex-fill">
+              <div class="post-username">{{ post.user.name if post.user else "User" }}</div>
+              <div class="post-time">{{ post.timestamp.strftime('%Y-%m-%d %H:%M') }}</div>
+            </div>
+          </div>
+
+          <!-- image -->
+          <div class="image-wrapper">
+            <img src="{{ url_for('uploaded_file', filename=post.image_filename) }}" class="post-img" alt="{{ post.caption }}">
+          </div>
+
+          <!-- actions -->
+          <div class="post-actions">
+            <!-- <div class="icon like">&#10084;</div>
+            <div class="icon">&#128172;</div>
+            <div class="icon">&#128257;</div> -->
+            {% if session.editor_logged_in %}
+              <form method="post" action="{{ url_for('delete_post', post_id=post.id) }}" class="inline-form" onsubmit="return confirm('Delete this post?');">
+                <button class="btn btn-link text-danger" type="submit" title="Delete post">Delete</button>
+              </form>
+            {% endif %}
+          </div>
+
+          <!-- caption -->
+          <div class="post-caption">
+            <div><strong>{{ post.user.name if post.user else "User" }}</strong> <span class="text-muted">{{ post.species.name }}{% if post.animal_name %} • {{ post.animal_name }}{% endif %}</span></div>
+            <div class="mt-2">{{ post.caption }}</div>
+            {% if post.notes %}<div class="mt-2 text-muted small">{{ post.notes }}</div>{% endif %}
+          </div>
+        </div>
+      {% else %}
+        <p>No posts yet.</p>
+      {% endfor %}
+      </div>
+  </div>
+{% endblock %}
