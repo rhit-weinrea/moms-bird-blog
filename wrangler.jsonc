@@ -3,14 +3,15 @@
  * https://developers.cloudflare.com/workers/wrangler/configuration/
  */
 {
-	"$schema": "node_modules/wrangler/config-schema.json",
 	// wrangler.jsonc
     "name": "creature-album",
 	"main": "worker/index.js",
 	"compatibility_date": "2025-09-13",
-
+	"assets": {
+		"directory": "dist",
+		"not_found_handling": "single-page-application"
+	},
 	"vars": {
-		"ORIGIN_URL": "https://creature-album.abby-weinreb.workers.dev/"
 	},
 	"observability": {
 		"enabled": true
